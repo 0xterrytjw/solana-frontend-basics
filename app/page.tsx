@@ -1,5 +1,4 @@
 import CustomLink from "@/components/CustomLink";
-import { FaGithub } from "react-icons/fa";
 import { MdViewModule } from "react-icons/md";
 
 const HomePage = async () => {
@@ -13,7 +12,10 @@ const HomePage = async () => {
   return (
     <main className="flex h-screen flex-col items-center justify-center p-8 tracking-widest">
       <h1 className="animate-pulse text-3xl font-bold">Solana Dev</h1>
-      <section className="p-8">{module("1", "/read-data")}</section>
+      <section className="p-8">
+        {module("1", "/read-data")}
+        {module("2", "/write-data")}
+      </section>
     </main>
   );
 };

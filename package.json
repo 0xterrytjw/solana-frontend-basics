@@ -1,6 +1,6 @@
 {
-  "name": "t2-template",
-  "version": "2.0.0",
+  "name": "solana-fe-basics",
+  "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

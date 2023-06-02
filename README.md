@@ -1,6 +1,7 @@
-## T2 Template 2.0
+## Solana FE basics
 
-Built with Next.js 13, Typescript, Tailwind, Prisma, and PostgreSQL. See package.json for more details. This project is still under development.
+A series of tutorials on how to build a frontend for Solana.
+Guide: https://www.soldev.app/course
 
 ## Getting started
 

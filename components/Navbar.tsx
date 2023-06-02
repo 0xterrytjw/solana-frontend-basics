@@ -38,8 +38,6 @@ const Navbar = ({ children }: NavbarProps) => {
 
   const { data: session, status } = useSession();
 
-  console.log("session -> ", session);
-
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <div className={themeMode}>
@@ -66,24 +64,7 @@ const Navbar = ({ children }: NavbarProps) => {
                   href="/"
                   className="text-xl font-extrabold tracking-tighter"
                 >
-                  T2 Template 2.0
-                  <span className="ml-1.5">
-                    {theme === "business" ? (
-                      <Image
-                        src="/svgs/aethero-logo-white.svg"
-                        alt="aethero logo"
-                        width={20}
-                        height={20}
-                      />
-                    ) : (
-                      <Image
-                        src="/svgs/aethero-logo-black.svg"
-                        alt="aethero logo"
-                        width={20}
-                        height={20}
-                      />
-                    )}
-                  </span>
+                  Solana FE Basics
                 </CustomLink>
               </div>
               <div className="hidden lg:flex">
@@ -108,9 +89,6 @@ const Navbar = ({ children }: NavbarProps) => {
                       tabIndex={0}
                       className="btn-ghost btn-circle avatar btn"
                     >
-                      {/* <div className="w-10 rounded-full">
-                      <img src="https://placeimg.com/80/80/people" />
-                    </div> */}
                       <Avatar>
                         <AvatarImage
                           src="https://placeimg.com/80/80/people"
