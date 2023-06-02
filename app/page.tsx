@@ -1,22 +1,19 @@
 import CustomLink from "@/components/CustomLink";
 import { FaGithub } from "react-icons/fa";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { MdViewModule } from "react-icons/md";
 
 const HomePage = async () => {
-  const session = await getServerSession(authOptions);
-  console.log("session [on Home Page] -> ", session);
+  const module = (moduleNum: string, url: string) => (
+    <CustomLink href={url} className="underline">
+      <MdViewModule className="mr-2" />
+      <span>Module {moduleNum}</span>
+    </CustomLink>
+  );
 
   return (
     <main className="flex h-screen flex-col items-center justify-center p-8 tracking-widest">
-      <h1 className="animate-pulse text-3xl font-bold">Let's build. 🚀</h1>
-      <CustomLink
-        href="https://github.com/terrytjw/t2-template"
-        className="flex gap-4 p-8"
-      >
-        <FaGithub />
-        Github repo
-      </CustomLink>
+      <h1 className="animate-pulse text-3xl font-bold">Solana Dev</h1>
+      <section className="p-8">{module("1", "/read-data")}</section>
     </main>
   );
 };
