@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import * as web3 from "@solana/web3.js";
 import { Button } from "@/components/ui/button";
-// import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import dynamic from "next/dynamic";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import toast from "react-hot-toast";
 
 // Use of next/dynamic is needed because the @solana/wallet-adapter-react-ui library likely contains
 // components that have browser-specific code, which is not executed on the server when Next.js does
@@ -24,43 +26,70 @@ const WalletMultiButton = dynamic(
 );
 
 const UsingWalletsClient = () => {
+  const [address, setAddress] = useState("");
+  const [amount, setAmount] = useState("");
+
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
 
-  const ping = async () => {
+  const sendSol = async () => {
     if (!connection || !publicKey) {
       return;
     }
 
-    const programId = new web3.PublicKey(
-      process.env.NEXT_PUBLIC_PROGRAM_ADDRESS!
-    );
-    const programDataAccount = new web3.PublicKey(
-      process.env.NEXT_PUBLIC_PROGRAM_DATA_ADDRESS!
-    );
+    let destinationPublicKey;
+    try {
+      destinationPublicKey = new web3.PublicKey(address);
+    } catch (error) {
+      toast.error(`Invalid address: ${error}`);
+      return;
+    }
+
     const transaction = new web3.Transaction();
 
-    const instruction = new web3.TransactionInstruction({
-      keys: [
-        {
-          pubkey: programDataAccount,
-          isSigner: false,
-          isWritable: true,
-        },
-      ],
-      programId,
+    const instruction = web3.SystemProgram.transfer({
+      fromPubkey: publicKey,
+      toPubkey: destinationPublicKey,
+      lamports: web3.LAMPORTS_PER_SOL * Number(amount),
     });
 
     transaction.add(instruction);
     sendTransaction(transaction, connection).then((sig) => {
-      console.log(sig);
+      console.log("TX -> ", sig);
     });
   };
 
   return (
     <main className="mt-12 w-1/2 p-4">
-      <div className="flex items-center justify-center gap-x-4">
-        <Button onClick={ping}>Ping</Button>
+      <Label htmlFor="address">Solana address</Label>
+      <Input
+        type="text"
+        id="address"
+        placeholder="e.g. HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH"
+        className="placeholder:text-gray-600 dark:border-gray-500"
+        autoComplete="off"
+        value={address}
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          setAddress(e.target.value)
+        }
+      />
+      <br />
+      <Label htmlFor="amount">Amount to send</Label>
+      <Input
+        type="number"
+        id="amount"
+        placeholder="e.g. 0.1"
+        className="placeholder:text-gray-600 dark:border-gray-500"
+        autoComplete="off"
+        value={amount}
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          setAmount(e.target.value)
+        }
+      />
+      <div className="mt-8 flex items-center justify-center gap-x-4">
+        <Button onClick={sendSol} disabled={!address || !amount}>
+          Send
+        </Button>
         <WalletMultiButton className="text-black dark:text-white" />
       </div>
     </main>
