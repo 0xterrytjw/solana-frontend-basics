@@ -4,7 +4,7 @@ import React, { ChangeEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import * as Web3 from "@solana/web3.js";
+import * as web3 from "@solana/web3.js";
 import toast from "react-hot-toast";
 
 const ReadDataClient = () => {
@@ -19,10 +19,10 @@ const ReadDataClient = () => {
     }
 
     try {
-      const key = new Web3.PublicKey(address);
-      const connection = new Web3.Connection(Web3.clusterApiUrl("devnet"));
+      const key = new web3.PublicKey(address);
+      const connection = new web3.Connection(web3.clusterApiUrl("devnet"));
       const bal = await connection.getBalance(key);
-      setBalance(bal / Web3.LAMPORTS_PER_SOL);
+      setBalance(bal / web3.LAMPORTS_PER_SOL);
 
       const account = await connection.getAccountInfo(key);
       setIsExecutable(account?.executable || false);

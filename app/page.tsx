@@ -15,6 +15,7 @@ const HomePage = async () => {
       <section className="p-8">
         {module("1", "/read-data")}
         {module("2", "/write-data")}
+        {module("3", "/using-wallets")}
       </section>
     </main>
   );
