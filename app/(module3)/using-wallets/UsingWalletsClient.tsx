@@ -1,7 +1,12 @@
 "use client";
 
 import React, { ChangeEvent, useState } from "react";
-import * as web3 from "@solana/web3.js";
+import {
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+} from "@solana/web3.js";
 import { Button } from "@/components/ui/button";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import dynamic from "next/dynamic";
@@ -39,18 +44,18 @@ const UsingWalletsClient = () => {
 
     let destinationPublicKey;
     try {
-      destinationPublicKey = new web3.PublicKey(address);
+      destinationPublicKey = new PublicKey(address);
     } catch (error) {
       toast.error(`Invalid address: ${error}`);
       return;
     }
 
-    const transaction = new web3.Transaction();
+    const transaction = new Transaction();
 
-    const instruction = web3.SystemProgram.transfer({
+    const instruction = SystemProgram.transfer({
       fromPubkey: publicKey,
       toPubkey: destinationPublicKey,
-      lamports: web3.LAMPORTS_PER_SOL * Number(amount),
+      lamports: LAMPORTS_PER_SOL * Number(amount),
     });
 
     transaction.add(instruction);
