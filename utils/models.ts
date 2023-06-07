@@ -5,26 +5,10 @@ export class Movie {
   rating: number;
   description: string;
 
-  // In order to properly interact with a Solana Program, we need to know how it expects its data inputs to be structured, hence the need for a schema.
-  borshInstructionSchema = borsh.struct([
-    borsh.u8("variant"), // indicates which instruction to be executed e.g. 0 = addMovie(), 1 = deleteMovie()
-    borsh.str("title"),
-    borsh.u8("rating"),
-    borsh.str("description"),
-  ]);
-
   constructor(title: string, rating: number, description: string) {
     this.title = title;
     this.rating = rating;
     this.description = description;
-  }
-
-  // In Node.js, a Buffer is a class that is used to handle binary data.
-  // Buffers are created to hold data that is being transferred between different parts of an application, and between applications.
-  serialize(): Buffer {
-    const buffer = Buffer.alloc(1000); // creates a large enough buffer to hold the serialized data (1000 bytes)
-    this.borshInstructionSchema.encode({ ...this, variant: 0 }, buffer); // "...this" is a spread operator that copies all the properties of the Movie class into a new object, and then we add the variant property to it. we encode the data into the buffer to
-    return buffer.slice(0, this.borshInstructionSchema.getSpan(buffer)); // getSpan() gets the length or span of the encoded data in the buffer
   }
 
   static mocks: Movie[] = [
@@ -49,4 +33,42 @@ export class Movie {
       `The Dark Knight is a 2008 superhero film directed, produced, and co-written by Christopher Nolan. Batman, in his darkest hour, faces his greatest challenge yet: he must become the symbol of the opposite of the Batmanian order, the League of Shadows.`
     ),
   ];
+
+  // In order to properly interact with a Solana Program, we need to know how it expects its data inputs to be structured, hence the need for a schema.
+  borshInstructionSchema = borsh.struct([
+    borsh.u8("variant"), // indicates which instruction to be executed e.g. 0 = addMovie(), 1 = deleteMovie()
+    borsh.str("title"),
+    borsh.u8("rating"),
+    borsh.str("description"),
+  ]);
+
+  static borshAccountSchema = borsh.struct([
+    borsh.bool("initialized"),
+    borsh.u8("rating"),
+    borsh.str("title"),
+    borsh.str("description"),
+  ]);
+
+  // In Node.js, a Buffer is a class that is used to handle binary data.
+  // Buffers are created to hold data that is being transferred between different parts of an application, and between applications.
+  serialize(): Buffer {
+    const buffer = Buffer.alloc(1000); // creates a large enough buffer to hold the serialized data (1000 bytes)
+    this.borshInstructionSchema.encode({ ...this, variant: 0 }, buffer); // "...this" is a spread operator that copies all the properties of the Movie class into a new object, and then we add the variant property to it. we encode the data into the buffer to
+    return buffer.slice(0, this.borshInstructionSchema.getSpan(buffer)); // getSpan() gets the length or span of the encoded data in the buffer
+  }
+
+  static deserialize(buffer?: Buffer): Movie | null {
+    if (!buffer) {
+      return null;
+    }
+
+    try {
+      const { title, rating, description } =
+        this.borshAccountSchema.decode(buffer);
+      return new Movie(title, rating, description);
+    } catch (error) {
+      console.log("Deserialization error:", error);
+      return null;
+    }
+  }
 }

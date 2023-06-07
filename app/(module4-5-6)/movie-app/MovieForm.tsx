@@ -4,11 +4,15 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import * as web3 from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { Movie } from "@/utils/models";
-
-const MOVIE_REVIEW_PROGRAM_ID = "CenYq6bDRB7p73EjsPEpiYN7uveyPUTdXkDkgUduboaN";
+import {
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
+import { MOVIE_REVIEW_PROGRAM_ID } from "@/utils/config";
 
 type FormProps = {};
 const MovieForm = () => {
@@ -32,14 +36,14 @@ const MovieForm = () => {
     }
 
     const buffer = movie.serialize();
-    const transaction = new web3.Transaction();
+    const transaction = new Transaction();
 
-    const [pda] = await web3.PublicKey.findProgramAddress(
+    const [pda] = PublicKey.findProgramAddressSync(
       [publicKey.toBuffer(), new TextEncoder().encode(movie.title)],
-      new web3.PublicKey(MOVIE_REVIEW_PROGRAM_ID)
+      new PublicKey(MOVIE_REVIEW_PROGRAM_ID)
     );
 
-    const instruction = new web3.TransactionInstruction({
+    const instruction = new TransactionInstruction({
       keys: [
         {
           pubkey: publicKey,
@@ -52,13 +56,13 @@ const MovieForm = () => {
           isWritable: true,
         },
         {
-          pubkey: web3.SystemProgram.programId,
+          pubkey: SystemProgram.programId,
           isSigner: false,
           isWritable: false,
         },
       ],
       data: buffer,
-      programId: new web3.PublicKey(MOVIE_REVIEW_PROGRAM_ID),
+      programId: new PublicKey(MOVIE_REVIEW_PROGRAM_ID),
     });
 
     transaction.add(instruction);
